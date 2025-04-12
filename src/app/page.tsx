@@ -1,103 +1,131 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { html } from "@codemirror/lang-html";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { xcodeLight } from "@uiw/codemirror-theme-xcode";
+import DebugPreview from "@/components/debug-preview";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+
+const DEFAULT_HTML = `<div class="p-4 m-2 border bg-blue-100 dark:bg-blue-900 dark:text-white rounded">
+  <h1 class="text-xl mb-2">CSS Debugger</h1>
+  <p class="w-[150px] text-ellipsis overflow-hidden whitespace-nowrap">This text is too long and will create an overflow situation to demonstrate the debugging capability.</p>
+  <div class="flex gap-2 mt-4">
+    <button class="px-3 py-1 bg-blue-500 text-white rounded">Button 1</button>
+    <button class="px-3 py-1 bg-gray-500 text-white rounded">Button 2</button>
+  </div>
+</div>`;
+
+export default function CssDebugger() {
+  const [code, setCode] = useState(DEFAULT_HTML);
+  const [showBoxModel, setShowBoxModel] = useState(true);
+  const [showOverflows, setShowOverflows] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Handle hydration and detect system theme
+  useEffect(() => {
+    setIsMounted(true);
+    const darkModeMediaQuery = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    );
+    setIsDarkMode(darkModeMediaQuery.matches);
+
+    if (darkModeMediaQuery.matches) {
+      document.documentElement.classList.add("dark");
+    }
+
+    const handleChange = (e: any) => {
+      setIsDarkMode(e.matches);
+      document.documentElement.classList.toggle("dark", e.matches);
+    };
+
+    darkModeMediaQuery.addEventListener("change", handleChange);
+    return () => darkModeMediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center">
+        Loading debugger...
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div
+      className={`h-screen w-screen flex flex-col ${isDarkMode ? "dark" : ""}`}
+    >
+      <header className="p-4 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white">
+        <div className="flex justify-between items-center">
+          <h1 className="text-xl font-bold">CSS Visual Debugger</h1>
+          <button
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+            onClick={() => {
+              setIsDarkMode(!isDarkMode);
+              document.documentElement.classList.toggle("dark");
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {isDarkMode ? "🔆" : "🌙"}
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="flex gap-4 mt-2">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={showBoxModel}
+              onChange={() => setShowBoxModel(!showBoxModel)}
+              className="mr-2"
+            />
+            Show Box Model
+          </label>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={showOverflows}
+              onChange={() => setShowOverflows(!showOverflows)}
+              className="mr-2"
+            />
+            Highlight Overflows
+          </label>
+        </div>
+      </header>
+      <div className="flex-1 w-full">
+        <PanelGroup direction="horizontal" className="w-full h-full">
+          <Panel defaultSize={50} minSize={20} className="w-full h-full">
+            <div className="h-full w-full overflow-hidden">
+              <CodeMirror
+                value={code}
+                height="100%"
+                width="100%"
+                extensions={[html()]}
+                onChange={(value) => setCode(value)}
+                theme={isDarkMode ? vscodeDark : xcodeLight}
+                style={{
+                  fontSize: "14px",
+                  height: "100%",
+                  width: "100%",
+                }}
+                basicSetup={{
+                  lineNumbers: true,
+                  highlightActiveLine: true,
+                  highlightSelectionMatches: true,
+                }}
+              />
+            </div>
+          </Panel>
+          <PanelResizeHandle className="w-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-col-resize" />
+          <Panel defaultSize={50} minSize={20} className="w-full h-full">
+            <DebugPreview
+              html={code}
+              showBoxModel={showBoxModel}
+              showOverflows={showOverflows}
+              darkMode={isDarkMode}
+            />
+          </Panel>
+        </PanelGroup>
+      </div>
     </div>
   );
 }
