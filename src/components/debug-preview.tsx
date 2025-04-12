@@ -1,7 +1,11 @@
 // components/DebugPreview.tsx
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
+
+// components/DebugPreview.tsx
+
+// components/DebugPreview.tsx
 
 interface DebugPreviewProps {
   html: string;
@@ -29,7 +33,7 @@ export default function DebugPreview({
     iframeDoc.open();
     iframeDoc.write(`
       <!DOCTYPE html>
-      <html class="${darkMode ? "dark" : ""}">
+      <html class="${darkMode ? 'dark' : ''}">
         <head>
           <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
           <script>
@@ -44,8 +48,8 @@ export default function DebugPreview({
             body { 
               margin: 0; 
               padding: 16px; 
-              background-color: ${darkMode ? "#1a1a1a" : "#ffffff"};
-              color: ${darkMode ? "#ffffff" : "#000000"};
+              background-color: ${darkMode ? '#1a1a1a' : '#ffffff'};
+              color: ${darkMode ? '#ffffff' : '#000000'};
               width: 100%;
               min-height: 100%;
               box-sizing: border-box;
@@ -55,11 +59,11 @@ export default function DebugPreview({
               width: 100%;
             }
             /* Debug styles */
-            ${showBoxModel ? getCssDebugStyles(darkMode) : ""}
-            ${showOverflows ? getOverflowStyles(darkMode) : ""}
+            ${showBoxModel ? getCssDebugStyles(darkMode) : ''}
+            ${showOverflows ? getOverflowStyles(darkMode) : ''}
           </style>
         </head>
-        <body class="${darkMode ? "dark" : ""}">
+        <body class="${darkMode ? 'dark' : ''}">
           <div id="content">${html}</div>
           <script>
             // Signal when DOM is ready
@@ -79,13 +83,13 @@ export default function DebugPreview({
 
     // Handle the message when iframe is loaded
     const handleIframeLoaded = (event: any) => {
-      if (event.data === "iframe-loaded" && (showBoxModel || showOverflows)) {
+      if (event.data === 'iframe-loaded' && (showBoxModel || showOverflows)) {
         // Now it's safe to inject debug logic
         injectDebugLogic(iframeDoc, showBoxModel, showOverflows, darkMode);
       }
     };
 
-    window.addEventListener("message", handleIframeLoaded);
+    window.addEventListener('message', handleIframeLoaded);
 
     // Fallback method with timeout
     const timeoutId = setTimeout(() => {
@@ -95,21 +99,21 @@ export default function DebugPreview({
     }, 100);
 
     return () => {
-      window.removeEventListener("message", handleIframeLoaded);
+      window.removeEventListener('message', handleIframeLoaded);
       clearTimeout(timeoutId);
     };
   }, [html, showBoxModel, showOverflows, darkMode]);
 
   return (
-    <div className="w-full h-full flex">
+    <div className="flex h-full w-full">
       <iframe
         ref={iframeRef}
-        className="w-full h-full border-none"
+        className="h-full w-full border-none"
         title="CSS Preview"
         style={{
-          width: "100%",
-          height: "100%",
-          background: darkMode ? "#1a1a1a" : "#ffffff",
+          width: '100%',
+          height: '100%',
+          background: darkMode ? '#1a1a1a' : '#ffffff',
         }}
       />
     </div>
@@ -119,11 +123,11 @@ export default function DebugPreview({
 function getCssDebugStyles(darkMode: boolean) {
   return `
     * {
-      outline: 1px solid ${darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} !important;
+      outline: 1px solid ${darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'} !important;
     }
     
     *:hover {
-      outline: 1px solid ${darkMode ? "#ff6b6b" : "#ff0000"} !important;
+      outline: 1px solid ${darkMode ? '#ff6b6b' : '#ff0000'} !important;
     }
   `;
 }
@@ -131,7 +135,7 @@ function getCssDebugStyles(darkMode: boolean) {
 function getOverflowStyles(darkMode: boolean) {
   return `
     .overflow-detected {
-      box-shadow: 0 0 0 2px ${darkMode ? "rgba(255, 100, 100, 0.5)" : "rgba(255, 0, 0, 0.3)"} !important;
+      box-shadow: 0 0 0 2px ${darkMode ? 'rgba(255, 100, 100, 0.5)' : 'rgba(255, 0, 0, 0.3)'} !important;
       position: relative;
     }
   `;
@@ -141,31 +145,31 @@ function injectDebugLogic(
   doc: Document,
   showBoxModel: boolean,
   showOverflows: boolean,
-  darkMode: boolean,
+  darkMode: boolean
 ) {
   // Safety check to make sure body exists
   if (!doc || !doc.body) {
-    console.error("Document body is not available yet");
+    console.error('Document body is not available yet');
     return;
   }
 
   // Add box model visualization
   if (showBoxModel) {
-    const style = doc.createElement("style");
+    const style = doc.createElement('style');
     style.textContent = `
       .debug-box {
         position: absolute;
         pointer-events: none;
         z-index: 9999;
       }
-      .debug-margin { background: ${darkMode ? "rgba(255, 100, 100, 0.15)" : "rgba(255, 0, 0, 0.1)"}; }
-      .debug-border { background: ${darkMode ? "rgba(100, 100, 255, 0.15)" : "rgba(0, 0, 255, 0.1)"}; }
-      .debug-padding { background: ${darkMode ? "rgba(100, 255, 100, 0.15)" : "rgba(0, 255, 0, 0.1)"}; }
-      .debug-content { background: ${darkMode ? "rgba(180, 180, 180, 0.1)" : "rgba(128, 128, 128, 0.1)"}; }
+      .debug-margin { background: ${darkMode ? 'rgba(255, 100, 100, 0.15)' : 'rgba(255, 0, 0, 0.1)'}; }
+      .debug-border { background: ${darkMode ? 'rgba(100, 100, 255, 0.15)' : 'rgba(0, 0, 255, 0.1)'}; }
+      .debug-padding { background: ${darkMode ? 'rgba(100, 255, 100, 0.15)' : 'rgba(0, 255, 0, 0.1)'}; }
+      .debug-content { background: ${darkMode ? 'rgba(180, 180, 180, 0.1)' : 'rgba(128, 128, 128, 0.1)'}; }
       .debug-label {
         position: absolute;
         font-size: 10px;
-        background: ${darkMode ? "#444" : "#333"};
+        background: ${darkMode ? '#444' : '#333'};
         color: white;
         padding: 2px 4px;
         border-radius: 2px;
@@ -176,7 +180,7 @@ function injectDebugLogic(
     doc.head.appendChild(style);
 
     // Add script to visualize box model
-    const script = doc.createElement("script");
+    const script = doc.createElement('script');
     script.textContent = `
       document.querySelectorAll('#content *').forEach(el => {
         el.addEventListener('mouseover', (e) => {
@@ -274,7 +278,7 @@ function injectDebugLogic(
 
   // Detect and highlight overflows
   if (showOverflows) {
-    const overflowScript = doc.createElement("script");
+    const overflowScript = doc.createElement('script');
     overflowScript.textContent = `
       function detectOverflows() {
         document.querySelectorAll('#content *').forEach(el => {
@@ -292,7 +296,7 @@ function injectDebugLogic(
               label.style.position = 'absolute';
               label.style.right = '0';
               label.style.top = '0';
-              label.style.backgroundColor = '${darkMode ? "rgba(255,100,100,0.8)" : "rgba(255,0,0,0.7)"}';
+              label.style.backgroundColor = '${darkMode ? 'rgba(255,100,100,0.8)' : 'rgba(255,0,0,0.7)'}';
               label.style.color = 'white';
               label.style.fontSize = '10px';
               label.style.padding = '2px 4px';
@@ -312,7 +316,7 @@ function injectDebugLogic(
               overflowInfo.style.position = 'absolute';
               overflowInfo.style.right = '0';
               overflowInfo.style.top = '18px';
-              overflowInfo.style.backgroundColor = '${darkMode ? "rgba(60,60,60,0.9)" : "rgba(0,0,0,0.7)"}';
+              overflowInfo.style.backgroundColor = '${darkMode ? 'rgba(60,60,60,0.9)' : 'rgba(0,0,0,0.7)'}';
               overflowInfo.style.color = 'white';
               overflowInfo.style.fontSize = '10px';
               overflowInfo.style.padding = '2px 4px';

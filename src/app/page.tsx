@@ -1,12 +1,14 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import CodeMirror from "@uiw/react-codemirror";
-import { html } from "@codemirror/lang-html";
-import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import { xcodeLight } from "@uiw/codemirror-theme-xcode";
-import DebugPreview from "@/components/debug-preview";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { html } from '@codemirror/lang-html';
+import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+import { xcodeLight } from '@uiw/codemirror-theme-xcode';
+import CodeMirror from '@uiw/react-codemirror';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+
+import { useEffect, useState } from 'react';
+
+import DebugPreview from '@/components/debug-preview';
 
 const DEFAULT_HTML = `<div class="p-4 m-2 border bg-blue-100 dark:bg-blue-900 dark:text-white rounded">
   <h1 class="text-xl mb-2">CSS Debugger</h1>
@@ -28,26 +30,26 @@ export default function CssDebugger() {
   useEffect(() => {
     setIsMounted(true);
     const darkModeMediaQuery = window.matchMedia(
-      "(prefers-color-scheme: dark)",
+      '(prefers-color-scheme: dark)'
     );
     setIsDarkMode(darkModeMediaQuery.matches);
 
     if (darkModeMediaQuery.matches) {
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add('dark');
     }
 
     const handleChange = (e: any) => {
       setIsDarkMode(e.matches);
-      document.documentElement.classList.toggle("dark", e.matches);
+      document.documentElement.classList.toggle('dark', e.matches);
     };
 
-    darkModeMediaQuery.addEventListener("change", handleChange);
-    return () => darkModeMediaQuery.removeEventListener("change", handleChange);
+    darkModeMediaQuery.addEventListener('change', handleChange);
+    return () => darkModeMediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   if (!isMounted) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center">
+      <div className="flex h-screen w-screen items-center justify-center">
         Loading debugger...
       </div>
     );
@@ -55,22 +57,22 @@ export default function CssDebugger() {
 
   return (
     <div
-      className={`h-screen w-screen flex flex-col ${isDarkMode ? "dark" : ""}`}
+      className={`flex h-screen w-screen flex-col ${isDarkMode ? 'dark' : ''}`}
     >
-      <header className="p-4 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white">
-        <div className="flex justify-between items-center">
+      <header className="bg-gray-100 p-4 text-gray-800 dark:bg-gray-800 dark:text-white">
+        <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">CSS Visual Debugger</h1>
           <button
-            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+            className="rounded-full bg-gray-200 p-2 dark:bg-gray-700"
             onClick={() => {
               setIsDarkMode(!isDarkMode);
-              document.documentElement.classList.toggle("dark");
+              document.documentElement.classList.toggle('dark');
             }}
           >
-            {isDarkMode ? "🔆" : "🌙"}
+            {isDarkMode ? '🔆' : '🌙'}
           </button>
         </div>
-        <div className="flex gap-4 mt-2">
+        <div className="mt-2 flex gap-4">
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -91,9 +93,9 @@ export default function CssDebugger() {
           </label>
         </div>
       </header>
-      <div className="flex-1 w-full">
-        <PanelGroup direction="horizontal" className="w-full h-full">
-          <Panel defaultSize={50} minSize={20} className="w-full h-full">
+      <div className="w-full flex-1">
+        <PanelGroup direction="horizontal" className="h-full w-full">
+          <Panel defaultSize={50} minSize={20} className="h-full w-full">
             <div className="h-full w-full overflow-hidden">
               <CodeMirror
                 value={code}
@@ -103,9 +105,9 @@ export default function CssDebugger() {
                 onChange={(value) => setCode(value)}
                 theme={isDarkMode ? vscodeDark : xcodeLight}
                 style={{
-                  fontSize: "14px",
-                  height: "100%",
-                  width: "100%",
+                  fontSize: '14px',
+                  height: '100%',
+                  width: '100%',
                 }}
                 basicSetup={{
                   lineNumbers: true,
@@ -115,8 +117,8 @@ export default function CssDebugger() {
               />
             </div>
           </Panel>
-          <PanelResizeHandle className="w-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-col-resize" />
-          <Panel defaultSize={50} minSize={20} className="w-full h-full">
+          <PanelResizeHandle className="w-2 cursor-col-resize bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600" />
+          <Panel defaultSize={50} minSize={20} className="h-full w-full">
             <DebugPreview
               html={code}
               showBoxModel={showBoxModel}
