@@ -50,7 +50,29 @@ const DEFAULT_HTML = `<div class="container">
     body {
         padding: 20px;
     }
-</style>`;
+</style>
+<script>
+    $(document).ready(function () {
+        $('#employeeForm').on('submit', function (e) {
+            e.preventDefault();
+            const name = $('#employeeName').val();
+            const position = $('#employeePosition').val();
+            const row = \`<tr>
+                                <td>\${name}</td>
+                                <td>\${position}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                                </td>
+                            </tr>\`;
+            $('#employeeTableBody').append(row);
+            $('#employeeForm')[0].reset();
+        });
+
+        $('#employeeTableBody').on('click', '.delete-btn', function () {
+            $(this).closest('tr').remove();
+        });
+    });
+</script>`;
 
 export default function CssDebugger() {
   const [code, setCode] = useState(DEFAULT_HTML);
