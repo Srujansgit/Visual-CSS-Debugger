@@ -98,10 +98,12 @@ export default function CssDebugger() {
       <header className="bg-secondary-background flex items-center justify-between border-b p-4">
         <div className="flex items-end justify-between space-x-1">
           <h1 className="text-2xl font-bold">VisualCSS</h1>
-          <p className="text-xs italic">(HTML, Bootstrap, jQuery)</p>
+          <p className="hidden text-xs italic lg:block">
+            (HTML, Bootstrap, jQuery)
+          </p>
         </div>
         <div className="flex space-x-4">
-          <Card className="flex flex-row items-center justify-center px-2 py-1">
+          <Card className="hidden flex-row items-center justify-center px-2 py-1 lg:flex">
             <div className="flex items-center">
               <Checkbox
                 checked={showBoxModel}
@@ -130,7 +132,12 @@ export default function CssDebugger() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-hidden">
+      <div className="flex h-screen w-screen items-center justify-center text-center font-bold lg:hidden">
+        The debugger is not available on mobile.
+        <br /> Please use a desktop browser.
+      </div>
+
+      <div className="hidden flex-1 overflow-hidden lg:block">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={50} minSize={20}>
             <div className="relative h-full w-full overflow-auto bg-[#ffffff]">
