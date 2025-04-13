@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: 'VisualCSS',
   description: 'A Live Code Editor to visualize HTML/CSS development.',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.png',
   },
   openGraph: {
     type: 'website',
