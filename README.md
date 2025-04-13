@@ -11,6 +11,7 @@ This website has been built almost completely in TypeScript with the following f
 1. [Next.JS](https://nextjs.org), with Static Site Generation.
 2. [TailwindCSS](https://tailwindcss.com), for styling.
 3. [Neobrutalism UI](https://www.neobrutalism.dev/), a component library based on [shadcn/ui](https://ui.shadcn.com).
+4. [CodeMirror](https://codemirror.net/), an extensible code editor.
 
 ## Development
 
