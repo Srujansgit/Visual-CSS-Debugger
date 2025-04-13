@@ -78,13 +78,14 @@ export default function DebugPreview({
             });
 
             el.addEventListener('mouseout', () => {
-              document.querySelectorAll('.debug-box, .debug-label').forEach(el => el.remove());
+              // Only remove box model visualizations, preserve overflow indicators
+              document.querySelectorAll('.debug-box, .debug-label:not(.overflow-indicator):not(.overflow-details)').forEach(el => el.remove());
             });
           });
 
           function visualizeBoxModel(element) {
-            // Remove any existing visualizations
-            document.querySelectorAll('.debug-box, .debug-label').forEach(el => el.remove());
+            // Remove only box model visualizations, keep overflow indicators
+            document.querySelectorAll('.debug-box, .debug-label:not(.overflow-indicator):not(.overflow-details)').forEach(el => el.remove());
 
             const rect = element.getBoundingClientRect();
             const styles = window.getComputedStyle(element);
