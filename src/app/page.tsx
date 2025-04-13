@@ -2,49 +2,63 @@
 
 import { html } from '@codemirror/lang-html';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-import { xcodeLight } from '@uiw/codemirror-theme-xcode';
 import CodeMirror from '@uiw/react-codemirror';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { Github } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
 import DebugPreview from '@/components/debug-preview';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 
-const DEFAULT_HTML = `<div class="p-4 m-2 border bg-blue-100 dark:bg-blue-900 dark:text-white rounded">
-  <h1 class="text-xl mb-2">CSS Debugger</h1>
-  <p class="w-[150px] text-ellipsis overflow-hidden whitespace-nowrap">This text is too long and will create an overflow situation to demonstrate the debugging capability.</p>
-  <div class="flex gap-2 mt-4">
-    <button class="px-3 py-1 bg-blue-500 text-white rounded">Button 1</button>
-    <button class="px-3 py-1 bg-gray-500 text-white rounded">Button 2</button>
-  </div>
-</div>`;
+const DEFAULT_HTML = `<div class="container">
+    <h1 class="text-center">Employee CRUD Operations</h1>
+    <form id="employeeForm">
+        <div class="mb-3">
+            <label for="employeeName" class="form-label">Employee Name</label>
+            <input type="text" class="form-control" id="employeeName" required>
+        </div>
+        <div class="mb-3">
+            <label for="employeePosition" class="form-label">Position</label>
+            <input type="text" class="form-control" id="employeePosition" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Employee</button>
+    </form>
+
+    <h2 class="mt-5">Employee List</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="employeeTableBody">
+        </tbody>
+    </table>
+</div>
+<style>
+    body {
+        padding: 20px;
+    }
+</style>`;
 
 export default function CssDebugger() {
   const [code, setCode] = useState(DEFAULT_HTML);
   const [showBoxModel, setShowBoxModel] = useState(true);
   const [showOverflows, setShowOverflows] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   // Handle hydration and detect system theme
   useEffect(() => {
     setIsMounted(true);
-    const darkModeMediaQuery = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    );
-    setIsDarkMode(darkModeMediaQuery.matches);
-
-    if (darkModeMediaQuery.matches) {
-      document.documentElement.classList.add('dark');
-    }
-
-    const handleChange = (e: any) => {
-      setIsDarkMode(e.matches);
-      document.documentElement.classList.toggle('dark', e.matches);
-    };
-
-    darkModeMediaQuery.addEventListener('change', handleChange);
-    return () => darkModeMediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   if (!isMounted) {
@@ -56,54 +70,46 @@ export default function CssDebugger() {
   }
 
   return (
-    <div
-      className={`flex h-screen w-screen flex-col ${isDarkMode ? 'dark' : ''}`}
-    >
-      <header className="bg-gray-100 p-4 text-gray-800 dark:bg-gray-800 dark:text-white">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">CSS Visual Debugger</h1>
-          <button
-            className="rounded-full bg-gray-200 p-2 dark:bg-gray-700"
-            onClick={() => {
-              setIsDarkMode(!isDarkMode);
-              document.documentElement.classList.toggle('dark');
-            }}
-          >
-            {isDarkMode ? '🔆' : '🌙'}
-          </button>
+    <main className="flex h-screen w-screen flex-col overflow-hidden">
+      <header className="bg-secondary-background flex items-center justify-between border-b p-4">
+        <div className="flex items-end justify-between space-x-1">
+          <h1 className="text-2xl font-bold">VisualCSS</h1>
+          <p className="text-xs italic">(HTML, Bootstrap, jQuery)</p>
         </div>
-        <div className="mt-2 flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={showBoxModel}
-              onChange={() => setShowBoxModel(!showBoxModel)}
-              className="mr-2"
-            />
-            Show Box Model
-          </label>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={showOverflows}
-              onChange={() => setShowOverflows(!showOverflows)}
-              className="mr-2"
-            />
-            Highlight Overflows
-          </label>
+        <div className="flex space-x-4">
+          <Card className="flex flex-row items-center justify-center px-2 py-1">
+            <div className="flex items-center">
+              <Checkbox
+                checked={showBoxModel}
+                onChange={() => setShowBoxModel(!showBoxModel)}
+                className="mr-2"
+              />
+              Show Box Model
+            </div>
+            <div className="flex items-center">
+              <Checkbox
+                checked={showOverflows}
+                onChange={() => setShowOverflows(!showOverflows)}
+                className="mr-2"
+              />
+              Highlight Overflows
+            </div>
+          </Card>
+          <Button size="icon">
+            <Github />
+          </Button>
         </div>
       </header>
-      <div className="w-full flex-1">
-        <PanelGroup direction="horizontal" className="h-full w-full">
-          <Panel defaultSize={50} minSize={20} className="h-full w-full">
-            <div className="h-full w-full overflow-hidden">
+
+      <div className="flex-1 overflow-hidden">
+        <ResizablePanelGroup direction="horizontal" className="h-full">
+          <ResizablePanel defaultSize={50} minSize={20}>
+            <div className="relative h-full w-full overflow-auto bg-[#1e1e1e]">
               <CodeMirror
                 value={code}
-                height="100%"
-                width="100%"
                 extensions={[html()]}
                 onChange={(value) => setCode(value)}
-                theme={isDarkMode ? vscodeDark : xcodeLight}
+                theme={vscodeDark}
                 style={{
                   fontSize: '14px',
                   height: '100%',
@@ -116,18 +122,17 @@ export default function CssDebugger() {
                 }}
               />
             </div>
-          </Panel>
-          <PanelResizeHandle className="w-2 cursor-col-resize bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600" />
-          <Panel defaultSize={50} minSize={20} className="h-full w-full">
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={50} minSize={20}>
             <DebugPreview
               html={code}
               showBoxModel={showBoxModel}
               showOverflows={showOverflows}
-              darkMode={isDarkMode}
             />
-          </Panel>
-        </PanelGroup>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
-    </div>
+    </main>
   );
 }
