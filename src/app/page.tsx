@@ -1,11 +1,13 @@
 'use client';
 
 import { html } from '@codemirror/lang-html';
-import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+import { xcodeLight } from '@uiw/codemirror-theme-xcode';
 import CodeMirror from '@uiw/react-codemirror';
 import { Github } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
+
+import Link from 'next/link';
 
 import DebugPreview from '@/components/debug-preview';
 import { Button } from '@/components/ui/button';
@@ -81,7 +83,7 @@ export default function CssDebugger() {
             <div className="flex items-center">
               <Checkbox
                 checked={showBoxModel}
-                onChange={() => setShowBoxModel(!showBoxModel)}
+                onCheckedChange={() => setShowBoxModel(!showBoxModel)}
                 className="mr-2"
               />
               Show Box Model
@@ -89,14 +91,19 @@ export default function CssDebugger() {
             <div className="flex items-center">
               <Checkbox
                 checked={showOverflows}
-                onChange={() => setShowOverflows(!showOverflows)}
+                onCheckedChange={() => setShowOverflows(!showOverflows)}
                 className="mr-2"
               />
               Highlight Overflows
             </div>
           </Card>
-          <Button size="icon">
-            <Github />
+          <Button asChild size="icon">
+            <Link
+              href="https://github.com/abhigyantrips/VisualCSS"
+              target="_blank"
+            >
+              <Github />
+            </Link>
           </Button>
         </div>
       </header>
@@ -104,12 +111,12 @@ export default function CssDebugger() {
       <div className="flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={50} minSize={20}>
-            <div className="relative h-full w-full overflow-auto bg-[#1e1e1e]">
+            <div className="relative h-full w-full overflow-auto bg-[#ffffff]">
               <CodeMirror
                 value={code}
                 extensions={[html()]}
                 onChange={(value) => setCode(value)}
-                theme={vscodeDark}
+                theme={xcodeLight}
                 style={{
                   fontSize: '14px',
                   height: '100%',
